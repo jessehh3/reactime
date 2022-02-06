@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
-const ChromeExtensionReloader = require('webpack-chrome-extension-reloader'); // enable hot reloading while developing a chrome extension
-// const TypedocWebpackPlugin = require('typedoc-webpack-plugin');
 
 const config = {
   // use a "multi-main entry" to inject multiple dependent files together
@@ -69,29 +67,7 @@ const config = {
       },
     ],
   },
-  plugins: [
-    // new TypedocWebpackPlugin({
-    //   name: 'Contoso',
-    //   mode: 'modules',
-    //   theme: './typedoc-theme/',
-    //   includeDeclarations: false,
-    //   ignoreCompilerErrors: true,
-    // }),
-  ],
+  mode: 'production',
 };
 
-module.exports = (env, argv) => {
-  if (argv.mode === 'development') {
-    config.plugins.push(
-      new ChromeExtensionReloader({
-        entries: {
-          contentScript: ['app', 'content'],
-          background: ['background'],
-        },
-      }),
-    );
-  } else {
-    config.mode = 'production';
-  }
-  return config;
-};
+module.exports = config;

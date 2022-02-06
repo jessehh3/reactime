@@ -256,19 +256,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     // This injects a script into the app that you're testing Reactime on,
     // so that Reactime's backend files can communicate with the app's DOM.
     case 'injectScript': {
-      chrome.tabs.executeScript(tabId, {
-        code: `
-        // Function will attach script to the dom 
-        const injectScript = (file, tag) => {
-          const htmlBody = document.getElementsByTagName(tag)[0];
-          const script = document.createElement('script');
-          script.setAttribute('type', 'text/javascript');
-          script.setAttribute('src', file);
-          document.title=${tabId} + '-' + document.title
-          htmlBody.appendChild(script);
-        };
-        injectScript(chrome.runtime.getURL('bundles/backend.bundle.js'), 'body');
-      `,
+      const injectScript = (file, tabId) => {
+        const htmlBody = document.getElementsByTagName('body')[0];
+        const script = document.createElement('script');
+        script.setAttribute('type', 'text/javascript');
+        script.setAttribute('src', file);
+        // eslint-disable-next-line prefer-template
+        document.title = tabId + '-' + document.title;
+        htmlBody.appendChild(script);
+      };
+
+      chrome.scripting.executeScript({
+        target: { tabId },
+        function: injectScript,
+        args: [chrome.runtime.getURL('bundles/backend.bundle.js'), tabId],
       });
       break;
     }
